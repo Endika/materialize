@@ -6,7 +6,7 @@
       var input_selector = 'input[type=text], input[type=password], input[type=email], input[type=url], input[type=tel], input[type=number], input[type=search], textarea';
       $(input_selector).each(function(index, element) {
         if ($(element).val().length > 0 || $(this).attr('placeholder') !== undefined || $(element)[0].validity.badInput === true) {
-          $(this).siblings('label, i').addClass('active');
+          $(this).siblings('label').addClass('active');
         }
         else {
           $(this).siblings('label, i').removeClass('active');
@@ -23,7 +23,7 @@
     // Add active if form auto complete
     $(document).on('change', input_selector, function () {
       if($(this).val().length !== 0 || $(this).attr('placeholder') !== undefined) {
-        $(this).siblings('label, i').addClass('active');
+        $(this).siblings('label').addClass('active');
       }
       validate_field($(this));
     });
@@ -61,6 +61,10 @@
       var $inputElement = $(this);
       if ($inputElement.val().length === 0 && $inputElement[0].validity.badInput !== true && $inputElement.attr('placeholder') === undefined) {
         $inputElement.siblings('label, i').removeClass('active');
+      }
+
+      if ($inputElement.val().length === 0 && $inputElement[0].validity.badInput !== true && $inputElement.attr('placeholder') !== undefined) {
+        $inputElement.siblings('i').removeClass('active');
       }
       validate_field($inputElement);
     });
@@ -182,7 +186,7 @@
       thumb.find('.value').html($(this).val());
     });
 
-    $(document).on('mousedown touchstart', range_type, function(e) {
+    $(document).on('input mousedown touchstart', range_type, function(e) {
       var thumb = $(this).siblings('.thumb');
 
       // If thumb indicator does not exist yet, create it
