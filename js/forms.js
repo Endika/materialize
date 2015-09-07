@@ -69,7 +69,7 @@
       validate_field($inputElement);
     });
 
-    validate_field = function(object) {
+    window.validate_field = function(object) {
       var hasLength = object.attr('length') !== undefined;
       var lenAttr = parseInt(object.attr('length'));
       var len = object.val().length;
@@ -83,7 +83,7 @@
       else {
         if (object.hasClass('validate')) {
           // Check for character counter attributes
-          if ((object.is(':valid') && hasLength && (len < lenAttr)) || (object.is(':valid') && !hasLength)) {
+          if ((object.is(':valid') && hasLength && (len <= lenAttr)) || (object.is(':valid') && !hasLength)) {
             object.removeClass('invalid');
             object.addClass('valid');
           }
@@ -152,19 +152,18 @@
 
 
     // File Input Path
-    $('.file-field').each(function() {
-      var path_input = $(this).find('input.file-path');
-      $(this).find('input[type="file"]').change(function () {
-        var files = $(this)[0].files;
-        var file_names = [];
-        for (var i=0; i < files.length; i++) {
-          file_names.push(files[i].name);
-        }
-        path_input.val(file_names.join(", "));
-        path_input.trigger('change');
-      });
-    });
 
+    $(document).on('change', '.file-field input[type="file"]', function () {
+      var file_field = $(this).closest('.file-field');
+      var path_input = file_field.find('input.file-path');
+      var files      = $(this)[0].files;
+      var file_names = [];
+      for (var i = 0; i < files.length; i++) {
+        file_names.push(files[i].name);
+      }
+      path_input.val(file_names.join(", "));
+      path_input.trigger('change');
+    });
 
 
     /****************
@@ -343,7 +342,10 @@
       if ( $select.is(':disabled') )
         dropdownIcon.addClass('disabled');
 
-      var $newSelect = $('<input type="text" class="select-dropdown" readonly="true" ' + (($select.is(':disabled')) ? 'disabled' : '') + ' data-activates="select-options-' + uniqueID +'" value="'+ label.html() +'"/>');
+      // escape double quotes
+      var sanitizedLabelHtml = label.html().replace(/"/g, '&quot;');
+
+      var $newSelect = $('<input type="text" class="select-dropdown" readonly="true" ' + (($select.is(':disabled')) ? 'disabled' : '') + ' data-activates="select-options-' + uniqueID +'" value="'+ sanitizedLabelHtml +'"/>');
       $select.before($newSelect);
       $newSelect.before(dropdownIcon);
 
